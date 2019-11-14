@@ -7,13 +7,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var storage *gorm.DB
-
-type BuildTable struct {
-	gorm.Model
-	Appid uuid.UUID
+func init() {
+	db, _ := OpenDb("/tmp/test.db")
+	db.AutoMigrate(&AppTable{}, &SourceTable{}, &ExecutableTable{})
 }
-
 
 func OpenDb(DbAbsPath string) (*gorm.DB, error) {
 	db, err := gorm.Open("sqlite3", DbAbsPath)

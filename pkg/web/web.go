@@ -20,7 +20,7 @@ func StartApi(port string) {
 		app_group.Handle("POST", "/new", AppNew)
 		app_group.Handle("POST", "/update", AppUpdate)
 		app_group.Handle("GET", "/{appid}", AppFind)
-		app_group.Handle("GET", "/list")
+		app_group.Handle("GET", "/list", AppList)
 	}
 	web.Run(iris.Addr(port), iris.WithoutServerError(iris.ErrServerClosed))
 
