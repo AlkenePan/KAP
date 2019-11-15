@@ -25,7 +25,7 @@ func UpdateAlert(alert AlertTable, db *gorm.DB) (AlertTable, error) {
 	if !exist {
 		return alert, fmt.Errorf("can not find id %s", alert.ID)
 	}
-	db.Model(&alert).Where("ID = ?", alert.ID).Updates(
+	db.Model(&alert).Where("id = ?", alert.ID).Updates(
 		map[string]interface{}{
 			"appid":        alert.Appid,
 			"level":        alert.Level,

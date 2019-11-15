@@ -11,6 +11,8 @@ func init() {
 	db, _ := OpenDb("/tmp/test.db")
 	db.AutoMigrate(&AppTable{}, &SourceTable{}, &ExecutableTable{})
 	db.AutoMigrate(&CryptoTable{})
+	db.AutoMigrate(&AlertTable{})
+	db.AutoMigrate(&BuildTable{})
 }
 
 func OpenDb(DbAbsPath string) (*gorm.DB, error) {

@@ -17,27 +17,33 @@ func StartApi(port string) {
 		response := string(asd)
 		ctx.WriteString(response)
 	})
-	app_group := web.Party("/app")
+	appGroup := web.Party("/app")
 	{
-		app_group.Handle("POST", "/new", AppNew)
-		app_group.Handle("POST", "/update", AppUpdate)
-		app_group.Handle("GET", "/{appid}", AppFind)
-		app_group.Handle("GET", "/list", AppList)
+		appGroup.Handle("POST", "/new", AppNew)
+		appGroup.Handle("POST", "/update", AppUpdate)
+		appGroup.Handle("GET", "/{appid}", AppFind)
+		appGroup.Handle("GET", "/list", AppList)
 	}
-	key_group := web.Party("/key")
+	keyGroup := web.Party("/key")
 	{
-		key_group.Handle("POST", "/update", KeyUpdate)
-		key_group.Handle("GET", "/{appid}", KeyFind)
-		key_group.Handle("GET", "/pub/{appid}", KeyFindPub)
-		key_group.Handle("GET", "/pri/{appid}", KeyFindPri)
+		keyGroup.Handle("POST", "/update", KeyUpdate)
+		keyGroup.Handle("GET", "/{appid}", KeyFind)
+		keyGroup.Handle("GET", "/pub/{appid}", KeyFindPub)
+		keyGroup.Handle("GET", "/pri/{appid}", KeyFindPri)
 
 	}
-	alert_group := web.Party("/alert")
+	alertGroup := web.Party("/alert")
 	{
-		alert_group.Handle("POST", "/new", AlertNew)
-		alert_group.Handle("POST", "/update", AlertUpdate)
+		alertGroup.Handle("POST", "/new", AlertNew)
+		alertGroup.Handle("POST", "/update", AlertUpdate)
 		//alert_group.Handle("GET", "/search", AlertSearch)
-		alert_group.Handle("GET", "/list", AlertList)
+		alertGroup.Handle("GET", "/list", AlertList)
+	}
+	buildGroup := web.Party("/build")
+	{
+		buildGroup.Handle("POST", "/new", BuildNew)
+		buildGroup.Handle("POST", "/status/set", BuildStatusSet)
+		buildGroup.Handle("POST", "/status/get/{buildID:int}", BuildStatusGet)
 	}
 	web.Run(iris.Addr(port), iris.WithoutServerError(iris.ErrServerClosed))
 
