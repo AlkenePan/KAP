@@ -10,6 +10,7 @@ import (
 func init() {
 	db, _ := OpenDb("/tmp/test.db")
 	db.AutoMigrate(&AppTable{}, &SourceTable{}, &ExecutableTable{})
+	db.AutoMigrate(&CryptoTable{})
 }
 
 func OpenDb(DbAbsPath string) (*gorm.DB, error) {

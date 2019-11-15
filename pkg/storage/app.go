@@ -40,8 +40,8 @@ func UpdateApp(app app.App, db *gorm.DB) (error) {
 	if !exist {
 		return fmt.Errorf("can not find appid %s", app.Appid)
 	}
-	db.Model(&sourceTable).Update("Language", app.SourceInfo.Language)
-	db.Model(&executableTable).Update("AbsPath", app.ExecInfo.AbsPath)
+	db.Model(&sourceTable).Where("appid = ?", app.Appid).Update("Language", app.SourceInfo.Language)
+	db.Model(&executableTable).Where("appid = ?", app.Appid).Update("AbsPath", app.ExecInfo.AbsPath)
 	return nil
 }
 
