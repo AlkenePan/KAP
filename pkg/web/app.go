@@ -6,7 +6,6 @@ import (
 	"youzoo/why/pkg/storage"
 )
 
-var db, err = storage.OpenDb("/tmp/test.db")
 
 
 // POST /app/new

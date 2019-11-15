@@ -11,7 +11,7 @@ type CryptoTable struct {
 	gorm.Model
 	Appid uuid.UUID
 	PubKey string `sql:"type:text"`
-	PrivateKey string `sql:"type:text"`
+	PriKey string `sql:"type:text"`
 }
 
 
@@ -20,22 +20,40 @@ func NewKeyPair(app app.App, db *gorm.DB) (error) {
 	return nil
 }
 
-func UpdateKeyPair(pubkey string, prikey string, db *gorm.DB) (error) {
+func UpdateKeyPair(appid string, pubkey string, prikey string, db *gorm.DB) (error) {
 	var cryptoTable CryptoTable
-	exist := db.First(&appTable, "appid = ?", app.Appid).RecordNotFound()
+	exist := db.First(&cryptoTable, "Appid = ?", appid).RecordNotFound()
 	if !exist {
 		return fmt.Errorf("can not find appid %s", app.Appid)
 	}
-	db.Model(&sourceTable).Update("Language", app.SourceInfo.Language)
-	db.Model(&executableTable).Update("AbsPath", app.ExecInfo.AbsPath)
+	db.Model(&cryptoTable).Where("appid = ?", appid).Update("PubKey", pubkey)
+	db.Model(&cryptoTable).Where("appid = ?", appid).Update("PriKey", prikey)
 	return nil
 }
 
-func FindApp(appid string, db *gorm.DB) (app.App, error) {
-	var app app.App
-	exist := db.Where("appid = ?", appid).First(&app).RecordNotFound()
+func FindKeyPair(appid string, db *gorm.DB) (CryptoTable, error) {
+	var cryptoTable CryptoTable
+	exist := db.Where("appid = ?", appid).First(&cryptoTable).RecordNotFound()
 	if !exist {
-		return app, fmt.Errorf("can not find appid %s", app.Appid)
+		return cryptoTable, fmt.Errorf("can not find appid %s", appid)
 	}
-	return app, nil
+	return cryptoTable, nil
+}
+
+func FindPubKey(appid string, db *gorm.DB) (CryptoTable, error) {
+	cryptoTable, err := FindKeyPair(appid, db)
+	if err != nil {
+		return CryptoTable{}, fmt.Errorf("can not find appid %s", appid)
+	}
+	cryptoTable.PriKey = ""
+	return cryptoTable, nil
+}
+
+func FindPriKey(appid string, db *gorm.DB) (CryptoTable, error) {
+	cryptoTable, err := FindKeyPair(appid, db)
+	if err != nil {
+		return CryptoTable{}, fmt.Errorf("can not find appid %s", appid)
+	}
+	cryptoTable.PubKey = ""
+	return cryptoTable, nil
 }
