@@ -32,6 +32,13 @@ func StartApi(port string) {
 		key_group.Handle("GET", "/pri/{appid}", KeyFindPri)
 
 	}
+	alert_group := web.Party("/alert")
+	{
+		alert_group.Handle("POST", "/new", AlertNew)
+		alert_group.Handle("POST", "/update", AlertUpdate)
+		//alert_group.Handle("GET", "/search", AlertSearch)
+		alert_group.Handle("GET", "/list", AlertList)
+	}
 	web.Run(iris.Addr(port), iris.WithoutServerError(iris.ErrServerClosed))
 
 }
