@@ -172,6 +172,28 @@ func BytesToInt(bs []byte) uint32 {
 00000020  d0 31 fa 08 f6 ff a5 03  9b ab d2 20 f2 79 74 d1  |.1......... .yt.|
 00000030  bd 36 95 13 16 f3 ee 89  eb fb 7e ac 88 89 d1 d3  |.6........~.....|
 */
+func LoadEncryptedFileHeader(fileAbsPath string) (string, []byte) {
+	f, err := os.Open(fileAbsPath)
+	check(err)
+	defer f.Close()
+	magicNumber := make([]byte, 3)
+	// appid
+	customLengthBytes := make([]byte, 5)
+	_, err = f.Read(magicNumber)
+	check(err)
+	_, err = f.Read(customLengthBytes)
+	check(err)
+	customLengthUint32 := BytesToInt(customLengthBytes)
+	appid := make([]byte, customLengthUint32)
+	_, err = f.Read(appid)
+	check(err)
+	// hash
+	hash := make([]byte, 256)
+	_, err = f.Read(hash)
+	check(err)
+	return string(appid), hash
+}
+
 func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byte, error) {
 	f, err := os.Open(fileAbsPath)
 	check(err)
