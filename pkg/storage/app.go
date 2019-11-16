@@ -30,7 +30,7 @@ type ExecutableTable struct {
 }
 
 func CreateApp(app app.App, db *gorm.DB) (error) {
-	db.Create(&AppTable{Appid: app.Appid})
+	db.Create(&AppTable{Appid: app.Appid, DNS:app.DNS})
 	db.Create(&SourceTable{Appid: app.Appid, Language: app.SourceInfo.Language})
 	db.Create(&ExecutableTable{Appid: app.Appid, AbsPath: app.ExecInfo.AbsPath})
 	return nil
