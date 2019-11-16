@@ -59,6 +59,11 @@ func main() {
 		return
 	}
 
+	if appinfo.DNS != common.GetDNSServer() {
+		fmt.Println(common.GreenBg, "[!] ERROR: DNS Server Error", common.Reset)
+		return
+	}
+
 	argv := strings.Split(appinfo.ExecInfo.Argv, ";")
 	envv := strings.Split(appinfo.ExecInfo.Envv, ";")
 
