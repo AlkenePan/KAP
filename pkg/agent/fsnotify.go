@@ -23,22 +23,26 @@ func AddNewWatcher(path string, msgChan chan FileWatcherMsg) {
 	defer watch.Close()
 	_ = watch.Add(path)
 
-	go func() {
-		for {
-			select {
-			case ev := <-watch.Events:
-				{
-					if ev.Op&fsnotify.Write == fsnotify.Write {
-						msgChan <- FileWatcherMsg{
-							File:  path,
-							Level: "high",
-							Msg:   "File Writed",
-						}
+	for {
+		select {
+		case ev := <-watch.Events:
+			{
+				if ev.Op&fsnotify.Write == fsnotify.Write {
+					msgChan <- FileWatcherMsg{
+						File:  path,
+						Level: "danger",
+						Msg:   "File Writed",
+					}
+				}
+
+				if ev.Op&fsnotify.Remove == fsnotify.Remove {
+					msgChan <- FileWatcherMsg{
+						File:  path,
+						Level: "danger",
+						Msg:   "File Remove",
 					}
 				}
 			}
 		}
-	}()
-
-	select {}
+	}
 }
