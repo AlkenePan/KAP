@@ -22,6 +22,8 @@ type ExecutableTable struct {
 	gorm.Model
 	Appid   uuid.UUID
 	AbsPath string
+	Argv []string
+	Envv []string
 }
 
 func CreateApp(app app.App, db *gorm.DB) (error) {

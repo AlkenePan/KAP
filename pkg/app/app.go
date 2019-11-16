@@ -15,6 +15,8 @@ type App struct {
 
 type Executable struct {
 	AbsPath string
+	Argv []string
+	Envv []string
 }
 
 type Source struct {
