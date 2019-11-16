@@ -15,8 +15,8 @@ type CryptoTable struct {
 }
 
 
-func NewKeyPair(app app.App, db *gorm.DB) (error) {
-	db.Create(&ExecutableTable{Appid:app.Appid, AbsPath:app.ExecInfo.AbsPath})
+func NewKeyPair(app app.App, pub string, pri string, db *gorm.DB) (error) {
+	db.Create(&CryptoTable{Appid: app.Appid, PubKey: pub, PriKey: pri})
 	return nil
 }
 
@@ -24,7 +24,7 @@ func UpdateKeyPair(appid string, pubkey string, prikey string, db *gorm.DB) (err
 	var cryptoTable CryptoTable
 	exist := db.First(&cryptoTable, "Appid = ?", appid).RecordNotFound()
 	if !exist {
-		return fmt.Errorf("can not find appid %s", app.Appid)
+		return fmt.Errorf("can not find appid %s", appid)
 	}
 	db.Model(&cryptoTable).Where("appid = ?", appid).Update("PubKey", pubkey)
 	db.Model(&cryptoTable).Where("appid = ?", appid).Update("PriKey", prikey)
@@ -34,7 +34,7 @@ func UpdateKeyPair(appid string, pubkey string, prikey string, db *gorm.DB) (err
 func FindKeyPair(appid string, db *gorm.DB) (CryptoTable, error) {
 	var cryptoTable CryptoTable
 	exist := db.Where("appid = ?", appid).First(&cryptoTable).RecordNotFound()
-	if !exist {
+	if exist {
 		return cryptoTable, fmt.Errorf("can not find appid %s", appid)
 	}
 	return cryptoTable, nil
