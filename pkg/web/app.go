@@ -1,8 +1,10 @@
 package web
 
 import (
+	"github.com/google/uuid"
 	"github.com/kataras/iris"
 	app2 "youzoo/why/pkg/app"
+	"youzoo/why/pkg/crypto"
 	"youzoo/why/pkg/storage"
 )
 
@@ -12,11 +14,14 @@ import (
 func AppNew(ctx iris.Context) {
 	var app app2.App
 	err := ctx.ReadJSON(&app)
+	app.Appid = uuid.New()
 	if ErrorHandling(err, ctx) {
 		return
 	}
 	// create AppTable
 	err = storage.CreateApp(app, db)
+	pri, pub := crypto.GenerateKeyPair(2048)
+	storage.NewKeyPair(app, string(crypto.PrivateKeyToBytes(pri)),string(crypto.PublicKeyToBytes(pub)), db)
 	if ErrorHandling(err, ctx) {
 		return
 	}
@@ -47,7 +52,7 @@ func AppFind(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.WriteString(app.Dumps())
+	ctx.JSON(app)
 }
 
 // GET /app/list?from=<int>&count=<int>

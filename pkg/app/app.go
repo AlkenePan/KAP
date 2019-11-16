@@ -15,8 +15,10 @@ type App struct {
 
 type Executable struct {
 	AbsPath string
-	Argv []string
-	Envv []string
+	Argv string
+	Envv string
+	Ptrace bool
+	UserName string
 }
 
 type Source struct {

@@ -1,9 +1,7 @@
 package web
 
 import (
-	"encoding/json"
 	"github.com/kataras/iris"
-	app2 "youzoo/why/pkg/app"
 	"youzoo/why/pkg/storage"
 )
 var db, err = storage.OpenDb("/tmp/test.db")
@@ -12,11 +10,6 @@ func StartApi(port string) {
 	web := iris.Default()
 	web.Logger().SetLevel("debug")
 
-	web.Handle("GET", "/", func(ctx iris.Context) {
-		asd, _ := json.Marshal(app2.Executable{"test"})
-		response := string(asd)
-		ctx.WriteString(response)
-	})
 	appGroup := web.Party("/app")
 	{
 		appGroup.Handle("POST", "/new", AppNew)
