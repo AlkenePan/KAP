@@ -74,11 +74,30 @@ func FindApp(appid string, db *gorm.DB) (app.App, error) {
 	return appInfo, nil
 }
 
-func ListApp(from, count int, db *gorm.DB) ([]AppTable, error) {
+func ListApp(from, count int, db *gorm.DB) ([]appInfo, error) {
 	var apps []AppTable
+	var appInfos []app.App
+
 	exist := db.Limit(count).Where("id", from).Find(&apps).RecordNotFound()
 	if !exist {
-		return apps, fmt.Errorf("list app failed")
+		return appInfos, fmt.Errorf("list app failed")
 	}
-	return apps, nil
+	for _, app_ := range apps {
+		var sourceTable SourceTable
+		var executableTable ExecutableTable
+
+		var appInfo app.App
+		db.Where("appid = ?", app_.Appid).First(&sourceTable).RecordNotFound()
+		db.Where("appid = ?", app_.Appid).First(&executableTable).RecordNotFound()
+		appInfo.Appid = app_.Appid
+		appInfo.DNS = app_.DNS
+		appInfo.ExecInfo.AbsPath = executableTable.AbsPath
+		appInfo.ExecInfo.Argv = executableTable.Argv
+		appInfo.ExecInfo.Envv = executableTable.Envv
+		appInfo.ExecInfo.Ptrace = executableTable.Ptrace
+		appInfo.ExecInfo.UserName = executableTable.UserName
+		appInfo.SourceInfo.Language = sourceTable.Language
+		appInfos = append(appInfos, appInfo)
+	}
+	return appInfos, nil
 }
