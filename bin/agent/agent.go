@@ -15,6 +15,7 @@ import (
 func main() {
 	var path string
 	var host string
+	var argv []string
 	var cryptoTable storage.CryptoTable
 
 	flag.StringVar(&path, "path", "", "ELF Path")
@@ -66,7 +67,9 @@ func main() {
 		return
 	}
 
-	argv := strings.Split(appinfo.ExecInfo.Argv, ";")
+	if appinfo.ExecInfo.Argv != "" {
+		argv = strings.Split(appinfo.ExecInfo.Argv, ";")
+	}
 	envv := strings.Split(appinfo.ExecInfo.Envv, ";")
 
 	process, err := agent.ExecveMemfdFromBytes(path, ori_elf_data, appinfo.ExecInfo.UserName, appinfo.ExecInfo.Ptrace, argv, envv)
