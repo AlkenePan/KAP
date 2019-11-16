@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"youzoo/why/pkg/storage"
 )
 

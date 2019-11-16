@@ -1,23 +1,27 @@
 package web
 
 import (
-	"github.com/kataras/iris"
+	"github.com/iris-contrib/middleware/cors"
+	"github.com/kataras/iris/v12"
 	"youzoo/why/pkg/storage"
 )
 var db, err = storage.OpenDb("/tmp/test.db")
 
 func StartApi(port string) {
-	web := iris.Default()
+	web := iris.New()
 	web.Logger().SetLevel("debug")
-
-	appGroup := web.Party("/app")
+	crs := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://10.6.24.60"},   //允许通过的主机名称
+		AllowCredentials: true,
+	})
+	appGroup := web.Party("/app", crs).AllowMethods(iris.MethodOptions)
 	{
 		appGroup.Handle("POST", "/new", AppNew)
 		appGroup.Handle("POST", "/update", AppUpdate)
 		appGroup.Handle("GET", "/{appid}", AppFind)
 		appGroup.Handle("GET", "/list", AppList)
 	}
-	keyGroup := web.Party("/key")
+	keyGroup := web.Party("/key", crs).AllowMethods(iris.MethodOptions)
 	{
 		keyGroup.Handle("POST", "/update", KeyUpdate)
 		keyGroup.Handle("GET", "/{appid}", KeyFind)
@@ -25,14 +29,14 @@ func StartApi(port string) {
 		keyGroup.Handle("GET", "/pri/{appid}", KeyFindPri)
 
 	}
-	alertGroup := web.Party("/alert")
+	alertGroup := web.Party("/alert", crs).AllowMethods(iris.MethodOptions)
 	{
 		alertGroup.Handle("POST", "/new", AlertNew)
 		alertGroup.Handle("POST", "/update", AlertUpdate)
 		//alert_group.Handle("GET", "/search", AlertSearch)
 		alertGroup.Handle("GET", "/list", AlertList)
 	}
-	buildGroup := web.Party("/build")
+	buildGroup := web.Party("/build", crs).AllowMethods(iris.MethodOptions)
 	{
 		buildGroup.Handle("POST", "/new", BuildNew)
 		buildGroup.Handle("POST", "/status/set", BuildStatusSet)

@@ -2,7 +2,7 @@ package web
 
 import (
 	"github.com/google/uuid"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	app2 "youzoo/why/pkg/app"
 	"youzoo/why/pkg/crypto"
 	"youzoo/why/pkg/storage"
