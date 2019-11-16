@@ -141,12 +141,10 @@ func EncryptChunks(chunks Chunks, pubKeyBytes []byte) Chunks {
 
 func HeaderChunks(appid []byte, hash []byte) Chunks {
 	magicNumber := []byte(MagicNumber)
-	customHeaderLength := len(appid)
 	magicChunk := Chunk{magicNumber, false}
-	lengthChunk := Chunk{IntToBytes(uint32(customHeaderLength)), false}
 	appidChunk := Chunk{appid, false}
 	hashChunk := Chunk{hash, true}
-	return Chunks{magicChunk, lengthChunk, appidChunk, hashChunk}
+	return Chunks{magicChunk, appidChunk, hashChunk}
 }
 
 func IntToBytes(number uint32) []byte {
@@ -177,14 +175,10 @@ func LoadEncryptedFileHeader(fileAbsPath string) (string, []byte) {
 	check(err)
 	defer f.Close()
 	magicNumber := make([]byte, 3)
-	// appid
-	customLengthBytes := make([]byte, 5)
 	_, err = f.Read(magicNumber)
 	check(err)
-	_, err = f.Read(customLengthBytes)
-	check(err)
-	customLengthUint32 := BytesToInt(customLengthBytes)
-	appid := make([]byte, customLengthUint32)
+	// appid
+	appid := make([]byte, 36)
 	_, err = f.Read(appid)
 	check(err)
 	// hash
@@ -199,14 +193,10 @@ func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byt
 	check(err)
 	defer f.Close()
 	magicNumber := make([]byte, 3)
-	// appid
-	customLengthBytes := make([]byte, 5)
 	_, err = f.Read(magicNumber)
 	check(err)
-	_, err = f.Read(customLengthBytes)
-	check(err)
-	customLengthUint32 := BytesToInt(customLengthBytes)
-	appid := make([]byte, customLengthUint32)
+	// appid
+	appid := make([]byte, 36)
 	_, err = f.Read(appid)
 	check(err)
 	// hash
@@ -216,13 +206,14 @@ func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byt
 
 	fi, _ := f.Stat()
 	size := fi.Size()
-	restFileLength := size - int64(3+5+int(customLengthUint32)+256)
+	restFileLength := size - int64(3+36+256)
 	var chunks Chunks
 	next := 256
 	for {
 		var tmpBytes []byte
 		if restFileLength < 64 {
 			tmpBytes = make([]byte, restFileLength)
+			f.Read(tmpBytes)
 			chunk := Chunk{tmpBytes, false}
 			chunks = append(chunks, chunk)
 			break
@@ -252,6 +243,7 @@ func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byt
 		}
 
 	}
+	//ChunkDumper(chunks[len(chunks)-1])
 	var plainELF []byte
 	for _, chunk := range chunks {
 		if chunk.EncryptFlag {

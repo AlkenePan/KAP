@@ -2,6 +2,7 @@ package elf
 
 import (
 	"fmt"
+	"os"
 	"testing"
 	"youzoo/why/pkg/crypto"
 )
@@ -32,9 +33,10 @@ func TestEncrypt(t *testing.T) {
 }
 
 func TestEncryptChunks(t *testing.T) {
-	chunks, extraChunk := SplitELF("/opt/youzu/ls")
-	_, pub := crypto.GenerateKeyPair(2048)
-	headerChunks := HeaderChunks([]byte("123123"), []byte("asdfasfsafasdf"))
+	chunks, extraChunk := SplitELF("/opt/youzu/scsi_ready")
+	ChunkDumper(extraChunk)
+	pri, pub := crypto.GenerateKeyPair(2048)
+	headerChunks := HeaderChunks([]byte("35097736-fb36-4c7e-9217-61794e9299dc"), []byte("6c6f31e624e2094dae7db53772855140"))
 	// headerChunks + chunks + extraChunk
 	fullChunks := append(headerChunks, chunks...)
 	fullChunks = append(fullChunks, extraChunk)
@@ -42,9 +44,20 @@ func TestEncryptChunks(t *testing.T) {
 	for _, chunk := range encryptChunks[:10] {
 		ChunkDumper(chunk)
 	}
-	WriteChunk("/opt/youzu/ls.encrypted", encryptChunks)
-	//elf, _ := LoadEncryptedFile("/opt/youzu/ls.encrypted", crypto.PrivateKeyToBytes(pri))
+	ChunkDumper(fullChunks[len(fullChunks)-1])
+	WriteChunk("/opt/youzu/scsi_ready.encrypted", encryptChunks)
+	_, _, elfBytes, _ := LoadEncryptedFile("/opt/youzu/scsi_ready.encrypted", crypto.PrivateKeyToBytes(pri))
+	f, err := os.Open("/opt/youzu/scsi_ready")
+	check(err)
+	defer f.Close()
+	tmpBytes := make([]byte, len(elfBytes))
+	f.Read(tmpBytes)
+	for i:=0;i<len(elfBytes);i++ {
+		if elfBytes[i] != tmpBytes[i] {
+			fmt.Println(i)
+		}
+	}
+
 	//fmt.Println(len(elf))
 
 }
-
