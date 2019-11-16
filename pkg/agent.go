@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 	"youzoo/why/pkg/agent"
+	"youzoo/why/pkg/app"
 	"youzoo/why/pkg/client"
 	"youzoo/why/pkg/common"
 	"youzoo/why/pkg/elf"
@@ -43,11 +45,39 @@ func main() {
 
 	file_current_md5 := common.GetBytesMD5(ori_elf_data)
 
-	md5 := ""
+	tempChunk := elf.Chunk{hash, true}
+	decryptChunk := elf.DecryptChunk(tempChunk, []byte(cryptoTable.PriKey))
+	if string(decryptChunk.Data) != file_current_md5 {
+		fmt.Println(common.GreenBg, "[!] ERROR: ELF File MD5 Verify Error", common.Reset)
+		return
+	}
 
-	verify_app_request_data := agent.VerifyAPPRequest{}
-	verify_app_request_data.DNS = common.GetDNSServer()
-	verify_app_request_data.APPID = appid
-	verify_app_request_data.MD5 = md5
+	appinfo := app.App{}
+	err = client.FetchAppInfo(host, appid, &appinfo)
+	if err != nil {
+		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		return
+	}
+
+	argv := strings.Split(appinfo.ExecInfo.Argv, ";")
+	envv := strings.Split(appinfo.ExecInfo.Envv, ";")
+
+	process, err := agent.ExecveMemfdFromBytes(path, ori_elf_data, appinfo.ExecInfo.UserName, appinfo.ExecInfo.Ptrace, argv, envv)
+
+	if err != nil {
+		if process != nil {
+			_ = process.Kill()
+		}
+
+		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		return
+	}
+
+	_, err = process.Wait()
+
+	if err != nil {
+		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		return
+	}
 
 }
