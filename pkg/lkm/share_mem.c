@@ -89,7 +89,6 @@ int checkpath(char *path) {
     write_index_lock();
     list_for_each(p, &protect_list) {
         s = list_entry(p, node, list);
-        printk("|%s|%s|%s\n", path, s->path, strstr(path, s->path));
         if(strstr((const char*)path, (const char*)s->path) != NULL) {
             write_index_unlock();
             return 1;
