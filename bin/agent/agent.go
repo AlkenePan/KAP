@@ -12,6 +12,23 @@ import (
 	"youzoo/why/pkg/storage"
 )
 
+func getMsgFromFileWatcher(appid string, host string, msgChan chan agent.FileWatcherMsg) {
+	for i := range msgChan {
+		alert_data := storage.AlertTable{
+			Appid:       appid,
+			Level:       i.Level,
+			Type:        "file watcher",
+			Info:        i.Msg,
+			PostContact: "",
+		}
+
+		err := client.NewAlert(host, appid, &alert_data)
+		if err != nil {
+			fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
+		}
+	}
+}
+
 func main() {
 	var path string
 	var host string
@@ -62,9 +79,11 @@ func main() {
 		return
 	}
 
-	if appinfo.DNS != common.GetDNSServer() {
-		fmt.Println(common.RedBg, "[!] ERROR: DNS Server Error", common.Reset)
-		return
+	if appinfo.DNS != "" {
+		if appinfo.DNS != common.GetDNSServer() {
+			fmt.Println(common.RedBg, "[!] ERROR: DNS Server Error", common.Reset)
+			return
+		}
 	}
 
 	if appinfo.ExecInfo.Argv != "" {
@@ -89,7 +108,7 @@ func main() {
 			PostContact: "",
 		}
 
-		err = client.NewAlert(host, appid, alert_data)
+		err = client.NewAlert(host, appid, &alert_data)
 		if err != nil {
 			fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		}
@@ -105,10 +124,14 @@ func main() {
 		PostContact: "",
 	}
 
-	err = client.NewAlert(host, appid, alert_data)
+	err = client.NewAlert(host, appid, &alert_data)
 	if err != nil {
 		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 	}
+
+	filrWatcherMsgChan := agent.GetNewFileWatcherMsgChan()
+	go agent.AddNewWatcher(path, filrWatcherMsgChan)
+	go getMsgFromFileWatcher(appid, host, filrWatcherMsgChan)
 
 	_, err = process.Wait()
 
@@ -123,7 +146,7 @@ func main() {
 			PostContact: "",
 		}
 
-		err = client.NewAlert(host, appid, alert_data)
+		err = client.NewAlert(host, appid, &alert_data)
 		if err != nil {
 			fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		}

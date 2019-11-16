@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AppList</title>
+    <title>Alert List</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -13,13 +13,14 @@
     <caption>Alert List</caption>
     <thead>
     <tr>
+        <th>ID</th>
+        <th>CreatedAt</th>
+        <th>UpdatedAt</th>
         <th>Appid</th>
-        <th>DNS</th>
-        <th>AbsPath</th>
-        <th>Argv</th>
-        <th>Envv</th>
-        <th>Ptrace</th>
-        <th>UserName</th>
+        <th>Level</th>
+        <th>Type</th>
+        <th>Info</th>
+        <th>PostContact</th>
     </tr>
     </thead>
     <tbody id="dataTable"></tbody>
@@ -28,7 +29,7 @@
 <script type="text/JavaScript">
     $(function() {
         $.ajax({
-            url : "http://10.6.24.60:5000/app/list?from=1&count=200",
+            url : "http://10.6.24.60:5000/alert/list?from=1&count=200",
             type : "GET",
             success : function(data) {
                 createShowingTable(data)
@@ -41,14 +42,15 @@
         var tableStr = "";
         var len = data.length;
         for (var i = 0; i < len; i++) {
-            tableStr = tableStr + "<tr>"
+            tableStr = tableStr + "<tr class = \"" + data[i].Level + "\">"
+                + "<td>" + data[i].ID + "</td>"
+                + "<td>" + data[i].CreatedAt + "</td>"
+                + "<td>" + data[i].UpdatedAt + "</td>"
                 + "<td>" + data[i].Appid + "</td>"
-                + "<td>" + data[i].DNS + "</td>"
-                + "<td>" + data[i].ExecInfo.AbsPath + "</td>"
-                + "<td>" + data[i].ExecInfo.Argv + "</td>"
-                + "<td>" + data[i].ExecInfo.Envv + "</td>"
-                + "<td>" + data[i].ExecInfo.Ptrace + "</td>"
-                + "<td>" + data[i].ExecInfo.UserName + "</td>"
+                + "<td>" + data[i].Level + "</td>"
+                + "<td>" + data[i].Type + "</td>"
+                + "<td>" + data[i].Info + "</td>"
+                + "<td>" + data[i].PostContact + "</td>"
                 + "</tr>";
         }
         $("#dataTable").html(tableStr);
