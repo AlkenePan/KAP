@@ -62,6 +62,7 @@ func FindApp(appid string, db *gorm.DB) (app.App, error) {
 	db.Where("appid = ?", appid).First(&sourceTable).RecordNotFound()
 	db.Where("appid = ?", appid).First(&executableTable).RecordNotFound()
 	appInfo.Appid = appTable.Appid
+	appInfo.DNS = appTable.DNS
 	appInfo.ExecInfo.AbsPath = executableTable.AbsPath
 	appInfo.ExecInfo.Argv = executableTable.Argv
 	appInfo.ExecInfo.Envv = executableTable.Envv

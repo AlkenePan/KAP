@@ -26,7 +26,7 @@ func main() {
 	headerChunks := elf.HeaderChunks([]byte(appid), []byte(md5))
 	var cryptoTable storage.CryptoTable
 	client.FetchPubKey(host, appid, &cryptoTable)
-	fmt.Printf("pub key: %s\n", cryptoTable.PubKey)
+	// fmt.Printf("pub key: %s\n", cryptoTable.PubKey)
 	// headerChunks + chunks + extraChunk
 	fullChunks := append(headerChunks, chunks...)
 	fullChunks = append(fullChunks, extraChunk)
