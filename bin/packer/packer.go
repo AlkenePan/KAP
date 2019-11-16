@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"youzoo/why/pkg/client"
 	"youzoo/why/pkg/common"
@@ -21,9 +22,11 @@ func main() {
 	}
 	chunks, extraChunk := elf.SplitELF(src)
 	md5, _ := common.GetFileMD5(src)
+	fmt.Printf("md5: %s\n", md5)
 	headerChunks := elf.HeaderChunks([]byte(appid), []byte(md5))
 	var cryptoTable storage.CryptoTable
 	client.FetchPubKey(host, appid, &cryptoTable)
+	fmt.Printf("pub key: %s\n", cryptoTable.PubKey)
 	// headerChunks + chunks + extraChunk
 	fullChunks := append(headerChunks, chunks...)
 	fullChunks = append(fullChunks, extraChunk)
