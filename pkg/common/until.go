@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -62,4 +63,11 @@ func GetFileMD5(fileAbsPath string) (string, error) {
 	}
 
 	return GetBytesMD5(fileBytes), nil
+}
+
+func Info(msg string) {
+	fmt.Println(GreenBg, "[+] Info:", msg, Reset)
+}
+func Error(msg string) {
+	fmt.Println(RedBg, "[!] Error:", msg, Reset)
 }

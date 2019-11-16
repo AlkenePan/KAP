@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"youzoo/why/pkg/client"
 	"youzoo/why/pkg/common"
@@ -20,11 +19,14 @@ func main() {
 	if (host == "" || appid == "" || src == "" || dst == "") {
 		os.Exit(1)
 	}
+	common.Info("AppId: " + appid)
+	common.Info("reading file: " + src)
 	chunks, extraChunk := elf.SplitELF(src)
 	md5, _ := common.GetFileMD5(src)
-	fmt.Printf("md5: %s\n", md5)
+	//fmt.Printf("md5: %s\n", md5)
 	headerChunks := elf.HeaderChunks([]byte(appid), []byte(md5))
 	var cryptoTable storage.CryptoTable
+	common.Info("Connecting: " + host)
 	client.FetchPubKey(host, appid, &cryptoTable)
 	// fmt.Printf("pub key: %s\n", cryptoTable.PubKey)
 	// headerChunks + chunks + extraChunk
@@ -32,6 +34,7 @@ func main() {
 	fullChunks = append(fullChunks, extraChunk)
 	//strings.ReplaceAll(cryptoTable.PubKey, "\n", "")
 	encryptChunks := elf.EncryptChunks(fullChunks, []byte(cryptoTable.PubKey))
-
+	common.Info("Encrypt Done")
 	elf.WriteChunk(dst, encryptChunks)
+	common.Info("Out: " + dst)
 }
