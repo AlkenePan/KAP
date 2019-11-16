@@ -59,6 +59,10 @@ func DenyPtrace(pid int) (err error) {
 }
 
 func ExecveMemfdFromBytes(process_name string, data []byte, user_name string, ptrace bool, argv []string, envv []string) (*os.Process, error) {
+	if user_name == "" {
+		user_name = "nobody"
+	}
+
 	user_info, err := user.Lookup(user_name)
 	if err != nil {
 		return nil, err
