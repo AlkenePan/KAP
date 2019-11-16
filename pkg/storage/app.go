@@ -74,12 +74,12 @@ func FindApp(appid string, db *gorm.DB) (app.App, error) {
 	return appInfo, nil
 }
 
-func ListApp(from, count int, db *gorm.DB) ([]appInfo, error) {
+func ListApp(from, count int, db *gorm.DB) ([]app.App, error) {
 	var apps []AppTable
 	var appInfos []app.App
 
 	exist := db.Limit(count).Where("id", from).Find(&apps).RecordNotFound()
-	if !exist {
+	if exist {
 		return appInfos, fmt.Errorf("list app failed")
 	}
 	for _, app_ := range apps {
