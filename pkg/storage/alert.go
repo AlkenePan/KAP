@@ -15,13 +15,19 @@ type AlertTable struct {
 }
 
 func CreateAlert(alert AlertTable, db *gorm.DB) (AlertTable, error) {
-	db.Create(alert)
+	var newAlert AlertTable
+	newAlert.Appid = alert.Appid
+	newAlert.Level = alert.Level
+	newAlert.Type = alert.Type
+	newAlert.Info = alert.Info
+	newAlert.PostContact = alert.PostContact
+	db.Create(&newAlert)
 	return alert, nil
 }
 
 func UpdateAlert(alert AlertTable, db *gorm.DB) (AlertTable, error) {
 	exist := db.First(&alert, "id = ?", alert.ID).RecordNotFound()
-	if !exist {
+	if exist {
 		return alert, fmt.Errorf("can not find id %s", alert.ID)
 	}
 	db.Model(&alert).Where("id = ?", alert.ID).Updates(
@@ -41,7 +47,8 @@ func UpdateAlert(alert AlertTable, db *gorm.DB) (AlertTable, error) {
 func ListAlert(from, count int, db *gorm.DB) ([]AlertTable, error) {
 	var alerts []AlertTable
 	exist := db.Limit(count).Where("id", from).Find(&alerts).RecordNotFound()
-	if !exist {
+	if exist {
 		return alerts, fmt.Errorf("list app failed")
 	}
-	return alerts, nil}
+	return alerts, nil
+}
