@@ -8,7 +8,7 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+<div class="table-responsive">
 <table class="table table-striped">
     <caption>Alert List</caption>
     <thead>
@@ -24,6 +24,7 @@
     </thead>
     <tbody id="dataTable"></tbody>
 </table>
+</div>
 </body>
 <script type="text/JavaScript">
     $(function() {
@@ -42,13 +43,13 @@
         var len = data.length;
         for (var i = 0; i < len; i++) {
             tableStr = tableStr + "<tr>"
-                + "<td>" + data[i].Appid + "</td>"
-                + "<td>" + data[i].DNS + "</td>"
-                + "<td>" + data[i].ExecInfo.AbsPath + "</td>"
-                + "<td>" + data[i].ExecInfo.Argv + "</td>"
-                + "<td>" + data[i].ExecInfo.Envv + "</td>"
-                + "<td>" + data[i].ExecInfo.Ptrace + "</td>"
-                + "<td>" + data[i].ExecInfo.UserName + "</td>"
+                + "<td class=\"success\">" + data[i].Appid + "</td>"
+                + "<td class=\"success\">" + data[i].DNS + "</td>"
+                + "<td class=\"success\">" + data[i].ExecInfo.AbsPath + "</td>"
+                + "<td class=\"success\">" + data[i].ExecInfo.Argv + "</td>"
+                + "<td class=\"success\">" + data[i].ExecInfo.Envv + "</td>"
+                + "<td class=\"success\">" + data[i].ExecInfo.Ptrace + "</td>"
+                + "<td class=\"success\">" + data[i].ExecInfo.UserName + "</td>"
                 + "</tr>";
         }
         $("#dataTable").html(tableStr);
