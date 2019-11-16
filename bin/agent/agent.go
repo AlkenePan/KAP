@@ -102,7 +102,7 @@ func main() {
 
 		alert_data := storage.AlertTable{
 			Appid:       appid,
-			Level:       "error",
+			Level:       "danger",
 			Type:        "runtime",
 			Info:        err.Error(),
 			PostContact: "",
@@ -140,7 +140,7 @@ func main() {
 
 		alert_data := storage.AlertTable{
 			Appid:       appid,
-			Level:       "error",
+			Level:       "danger",
 			Type:        "runtime(wait)",
 			Info:        err.Error(),
 			PostContact: "",
