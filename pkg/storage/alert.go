@@ -2,13 +2,12 @@ package storage
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
 
 type AlertTable struct {
 	gorm.Model
-	Appid       uuid.UUID
+	Appid       string
 	Level       string
 	Type        string
 	Info        string `sql:"type:text"`
