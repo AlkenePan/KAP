@@ -8,7 +8,7 @@ import (
 var db, err = storage.OpenDb("/tmp/test.db")
 
 func StartApi(port string) {
-	web := iris.New()
+	web := iris.Default()
 	web.Logger().SetLevel("debug")
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},   //允许通过的主机名称

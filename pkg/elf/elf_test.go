@@ -33,7 +33,7 @@ func TestEncrypt(t *testing.T) {
 }
 
 func TestEncryptChunks(t *testing.T) {
-	chunks, extraChunk := SplitELF("/opt/youzu/scsi_ready")
+	chunks, extraChunk := SplitELF("/opt/youzu/main")
 	ChunkDumper(extraChunk)
 	pri, pub := crypto.GenerateKeyPair(2048)
 	headerChunks := HeaderChunks([]byte("35097736-fb36-4c7e-9217-61794e9299dc"), []byte("6c6f31e624e2094dae7db53772855140"))
@@ -45,9 +45,9 @@ func TestEncryptChunks(t *testing.T) {
 		ChunkDumper(chunk)
 	}
 	ChunkDumper(fullChunks[len(fullChunks)-1])
-	WriteChunk("/opt/youzu/scsi_ready.encrypted", encryptChunks)
-	_, _, elfBytes, _ := LoadEncryptedFile("/opt/youzu/scsi_ready.encrypted", crypto.PrivateKeyToBytes(pri))
-	f, err := os.Open("/opt/youzu/scsi_ready")
+	WriteChunk("/opt/youzu/main.encrypted", encryptChunks)
+	_, _, elfBytes, _ := LoadEncryptedFile("/opt/youzu/main.encrypted", crypto.PrivateKeyToBytes(pri))
+	f, err := os.Open("/opt/youzu/main")
 	check(err)
 	defer f.Close()
 	tmpBytes := make([]byte, len(elfBytes))
