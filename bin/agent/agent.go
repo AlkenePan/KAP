@@ -21,25 +21,25 @@ func main() {
 	flag.StringVar(&host, "h", "", "Verify Server Host")
 
 	if path == "" {
-		fmt.Println(common.GreenBg, "[!] ERROR: ELF Path is Null", common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: ELF Path is Null", common.Reset)
 		return
 	}
 
 	if host == "" {
-		fmt.Println(common.GreenBg, "[!] ERROR: Verify Server Host is Null", common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: Verify Server Host is Null", common.Reset)
 		return
 	}
 
 	appid, hash := elf.LoadEncryptedFileHeader(path)
 	err := client.FetchPriKey(host, appid, &cryptoTable)
 	if err != nil {
-		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
 
 	_, _, ori_elf_data, err := elf.LoadEncryptedFile(path, []byte(cryptoTable.PriKey))
 	if err != nil {
-		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
 
@@ -48,19 +48,19 @@ func main() {
 	tempChunk := elf.Chunk{hash, true}
 	decryptChunk := elf.DecryptChunk(tempChunk, []byte(cryptoTable.PriKey))
 	if string(decryptChunk.Data) != file_current_md5 {
-		fmt.Println(common.GreenBg, "[!] ERROR: ELF File MD5 Verify Error", common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: ELF File MD5 Verify Error", common.Reset)
 		return
 	}
 
 	appinfo := app.App{}
 	err = client.FetchAppInfo(host, appid, &appinfo)
 	if err != nil {
-		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
 
 	if appinfo.DNS != common.GetDNSServer() {
-		fmt.Println(common.GreenBg, "[!] ERROR: DNS Server Error", common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: DNS Server Error", common.Reset)
 		return
 	}
 
@@ -74,14 +74,14 @@ func main() {
 			_ = process.Kill()
 		}
 
-		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
 
 	_, err = process.Wait()
 
 	if err != nil {
-		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
 }
