@@ -172,7 +172,7 @@ func BytesToInt(bs []byte) uint32 {
 00000020  d0 31 fa 08 f6 ff a5 03  9b ab d2 20 f2 79 74 d1  |.1......... .yt.|
 00000030  bd 36 95 13 16 f3 ee 89  eb fb 7e ac 88 89 d1 d3  |.6........~.....|
 */
-func LoadEncryptedFile(fileAbsPath string, priKey []byte) ([]byte, error) {
+func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byte, error) {
 	f, err := os.Open(fileAbsPath)
 	check(err)
 	defer f.Close()
@@ -241,5 +241,5 @@ func LoadEncryptedFile(fileAbsPath string, priKey []byte) ([]byte, error) {
 
 		}
 	}
-	return plainELF, nil
+	return string(appid), hash, plainELF, nil
 }
