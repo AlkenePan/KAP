@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/echarts/4.4.0-rc.1/echarts.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.js"></script>
+</head>
+<body>
+<div class="mdsd-content">
+    <div class="panel panel-info" style="background: none;">
+        <div class="panel-body" style="width: 100%;">
+            <table id="table-javascript" class="table table-hover table-responsive "></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#table-javascript').bootstrapTable({
+        method : 'get',
+        url : "http://localhost:5000/app/list?from=1&count=200",
+        cache : false,
+        pagination : true,
+        root : 'workers',
+        total : 'totalElements',
+        sidePagination : 'server',
+        columns : [ {
+            field : 'address',
+            title : 'Address',
+            align : 'center',
+            valign : 'middle'
+        }, {
+            field : 'state',
+            title : 'State',
+            align : 'center',
+            valign : 'middle',
+        } ]
+    });
+    $(window).resize(function() {
+        $('#table-javascript').bootstrapTable('resetView');
+    });
+</script>
+</body>
+</html>
