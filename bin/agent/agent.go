@@ -51,7 +51,7 @@ func main() {
 	}
 
 	appinfo := app.App{}
-	err = client.FetchAppInfo(host, appid, &appinfo)
+	err = client.FetchAppInfo(*host, appid, &appinfo)
 	if err != nil {
 		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
