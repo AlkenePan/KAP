@@ -10,7 +10,7 @@ import (
 type AppTable struct {
 	gorm.Model
 	Appid uuid.UUID
-	DNS string
+	DNS   string
 }
 
 type SourceTable struct {
@@ -21,18 +21,20 @@ type SourceTable struct {
 
 type ExecutableTable struct {
 	gorm.Model
-	Appid   uuid.UUID
-	AbsPath string
-	Argv string
-	Envv string
-	Ptrace bool
+	Appid    uuid.UUID
+	AbsPath  string
+	Argv     string
+	Envv     string
+	Ptrace   bool
 	UserName string
 }
 
 func CreateApp(app app.App, db *gorm.DB) (error) {
-	db.Create(&AppTable{Appid: app.Appid, DNS:app.DNS})
+	db.Create(&AppTable{Appid: app.Appid, DNS: app.DNS})
 	db.Create(&SourceTable{Appid: app.Appid, Language: app.SourceInfo.Language})
-	db.Create(&ExecutableTable{Appid: app.Appid, AbsPath: app.ExecInfo.AbsPath})
+	db.Create(&ExecutableTable{Appid: app.Appid, AbsPath: app.ExecInfo.AbsPath,
+		Argv: app.ExecInfo.Argv, Envv: app.ExecInfo.Envv,
+		Ptrace: app.ExecInfo.Ptrace, UserName: app.ExecInfo.UserName})
 	return nil
 }
 
