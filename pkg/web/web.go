@@ -11,7 +11,7 @@ func StartApi(port string) {
 	web := iris.New()
 	web.Logger().SetLevel("debug")
 	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://10.6.24.60:5000"},   //允许通过的主机名称
+		AllowedOrigins:   []string{"*"},   //允许通过的主机名称
 		AllowCredentials: true,
 	})
 	appGroup := web.Party("/app", crs).AllowMethods(iris.MethodOptions)
