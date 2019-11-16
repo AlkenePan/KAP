@@ -79,5 +79,4 @@ func main() {
 		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
 		return
 	}
-
 }
