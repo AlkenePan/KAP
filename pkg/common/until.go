@@ -1,6 +1,8 @@
 package common
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -36,4 +38,10 @@ func GetDNSServer() string {
 	ori_list := strings.Split(ori_str, "\n")
 	dns := strings.ReplaceAll(ori_list[0], "nameserver", "")
 	return strings.TrimSpace(dns)
+}
+
+func GetBytesMD5(data []byte) string {
+	hasher := md5.New()
+	hasher.Write(data)
+	return hex.EncodeToString(hasher.Sum(nil))
 }
