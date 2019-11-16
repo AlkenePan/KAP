@@ -45,3 +45,16 @@ func GetBytesMD5(data []byte) string {
 	hasher.Write(data)
 	return hex.EncodeToString(hasher.Sum(nil))
 }
+
+func GetFileMD5(fileAbsPath string) (string, error) {
+	f, err := os.Open(fileAbsPath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	fi, _ := f.Stat()
+	si := fi.Size()
+	fileBytes := make([]byte, si)
+	f.Read(fileBytes)
+	return GetBytesMD5(fileBytes), nil
+}
