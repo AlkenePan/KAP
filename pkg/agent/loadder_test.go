@@ -6,6 +6,10 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	err := ExecveMemfd("/root/gohack/test", []string{}, []string{})
-	fmt.Println(err)
+	process, err := ExecveMemfd("/root/gohack/test", "nobody", false, []string{}, []string{})
+	if err != nil {
+		fmt.Println("ERROR!", err)
+	}
+	fmt.Println(process.Pid)
+	_, _ = process.Wait()
 }

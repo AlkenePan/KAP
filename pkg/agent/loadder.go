@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
+	"os/user"
+	"strconv"
 	"syscall"
 	"unsafe"
 )
 
 const (
-	MFD_CREATE  = 319
-	MFD_CLOEXEC = 0x0001
+	PTRACE       = 101
+	MFD_CREATE   = 319
+	MFD_CLOEXEC  = 0x0001
+	PTRACE_SEIZE = 0x4206
 )
 
 type MemFD struct {
@@ -46,19 +49,34 @@ func (self *MemFD) ExecuteWithAttributes(procAttr *syscall.ProcAttr, arguments .
 	return syscall.StartProcess(self.Path(), append([]string{self.Name()}, arguments...), procAttr)
 }
 
-func ExecveMemfd(path string, argv []string, envv []string) error {
-	data, err := ReadFile(path)
-	path_list := strings.Split(path, "/")
-	file_name := path_list[len(path_list)]
-
-	if err != nil {
+func DenyPtrace(pid int) (err error) {
+	_, _, e := syscall.Syscall6(PTRACE, uintptr(PTRACE_SEIZE), uintptr(pid), uintptr(0), uintptr(0), uintptr(0), uintptr(0))
+	if e != 0 {
+		err = syscall.Errno(e)
 		return err
 	}
+	return
+}
 
-	memfd := CreateMemfd(file_name)
+func ExecveMemfd(path string, user_name string, ptrace bool, argv []string, envv []string) (*os.Process, error) {
+	data, err := ReadFile(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user_info, err := user.Lookup(user_name)
+	if err != nil {
+		return nil, err
+	}
+
+	uid, _ := strconv.Atoi(user_info.Uid)
+	gid, _ := strconv.Atoi(user_info.Gid)
+
+	memfd := CreateMemfd(path)
 	_, err = memfd.Write(data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	os_envv := os.Environ()
@@ -67,6 +85,31 @@ func ExecveMemfd(path string, argv []string, envv []string) error {
 		os_envv = append(os_envv, envv[i])
 	}
 
-	err = syscall.Exec(memfd.Path(), argv, os_envv)
-	return err
+	procAttr := &os.ProcAttr{
+		Env:   os_envv,
+		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+		Sys: &syscall.SysProcAttr{
+			Credential: &syscall.Credential{
+				Uid: uint32(uid),
+				Gid: uint32(gid),
+			},
+			Setsid: true,
+		},
+	}
+
+	process, err := os.StartProcess(memfd.Path(), append([]string{path}, argv...), procAttr)
+
+	if err != nil {
+		return process, err
+	}
+
+	if !ptrace {
+		err = DenyPtrace(process.Pid)
+		if err != nil {
+			_ = process.Kill()
+			return process, err
+		}
+	}
+
+	return process, err
 }
