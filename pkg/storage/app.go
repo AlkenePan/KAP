@@ -10,6 +10,7 @@ import (
 type AppTable struct {
 	gorm.Model
 	Appid uuid.UUID
+	DNS string
 }
 
 type SourceTable struct {

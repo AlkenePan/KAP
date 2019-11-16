@@ -12,7 +12,8 @@ func TestCrypto(t *testing.T) {
 	fmt.Println("priv key: ", string(PrivateKeyToBytes(priv)))
 	plaintext := []byte("gaba gaba gaba hey")
 	plaintextBase64Encoded := BytesBase64Encode(plaintext)
-	ciphertext := EncryptWithPublicKey(plaintextBase64Encoded, pub)
+	//ciphertext := EncryptWithPublicKey(plaintextBase64Encoded, pub)
+	ciphertext := EncryptWithPublicKey(plaintextBase64Encoded, BytesToPublicKey([]byte(string(PublicKeyToBytes(pub)))))
 	ciphertextBase64Encoded := BytesBase64Encode(ciphertext)
 	ciphertextBase64Decoded := BytesBase64Decode(ciphertextBase64Encoded)
 

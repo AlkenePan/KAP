@@ -9,10 +9,16 @@ import (
 )
 
 func main() {
+	if len(os.Args) <= 1 {
+		os.Exit(1)
+	}
 	host := os.Args[1]
 	appid := os.Args[2]
 	src := os.Args[3]
 	dst := os.Args[4]
+	if (host == "" || appid == "" || src == "" || dst == "") {
+		os.Exit(1)
+	}
 	chunks, extraChunk := elf.SplitELF(src)
 	md5, _ := common.GetFileMD5(src)
 	headerChunks := elf.HeaderChunks([]byte(appid), []byte(md5))
@@ -21,9 +27,8 @@ func main() {
 	// headerChunks + chunks + extraChunk
 	fullChunks := append(headerChunks, chunks...)
 	fullChunks = append(fullChunks, extraChunk)
+	//strings.ReplaceAll(cryptoTable.PubKey, "\n", "")
 	encryptChunks := elf.EncryptChunks(fullChunks, []byte(cryptoTable.PubKey))
-	for _, chunk := range encryptChunks[:10] {
-		elf.ChunkDumper(chunk)
-	}
+
 	elf.WriteChunk(dst, encryptChunks)
 }

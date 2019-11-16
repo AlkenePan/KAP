@@ -11,6 +11,7 @@ type App struct {
 	Appid uuid.UUID
 	ExecInfo Executable
 	SourceInfo Source
+	DNS string
 }
 
 type Executable struct {
