@@ -80,13 +80,54 @@ func main() {
 		}
 
 		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
+
+		alert_data := storage.AlertTable{
+			Appid:       appid,
+			Level:       "error",
+			Type:        "runtime",
+			Info:        err.Error(),
+			PostContact: "",
+		}
+
+		err = client.NewAlert(host, appid, alert_data)
+		if err != nil {
+			fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
+		}
+
 		return
+	}
+
+	alert_data := storage.AlertTable{
+		Appid:       appid,
+		Level:       "success",
+		Type:        "runtime",
+		Info:        "",
+		PostContact: "",
+	}
+
+	err = client.NewAlert(host, appid, alert_data)
+	if err != nil {
+		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
 	}
 
 	_, err = process.Wait()
 
 	if err != nil {
 		fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
+
+		alert_data := storage.AlertTable{
+			Appid:       appid,
+			Level:       "error",
+			Type:        "runtime(wait)",
+			Info:        err.Error(),
+			PostContact: "",
+		}
+
+		err = client.NewAlert(host, appid, alert_data)
+		if err != nil {
+			fmt.Println(common.RedBg, "[!] ERROR: "+err.Error(), common.Reset)
+		}
+
 		return
 	}
 }
