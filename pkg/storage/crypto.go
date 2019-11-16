@@ -14,6 +14,12 @@ type CryptoTable struct {
 	PriKey string `sql:"type:text"`
 }
 
+//func save_key(appid) {
+//
+//}
+//func find_key(appid ) {
+//
+//}
 
 func NewKeyPair(app app.App, pub string, pri string, db *gorm.DB) (error) {
 	db.Create(&CryptoTable{Appid: app.Appid, PubKey: pub, PriKey: pri})

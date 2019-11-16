@@ -80,6 +80,7 @@ func BytesToPublicKey(pub []byte) *rsa.PublicKey {
 	if !ok {
 		log.Fatalln("not ok")
 	}
+
 	return key
 }
 

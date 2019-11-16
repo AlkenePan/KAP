@@ -8,8 +8,6 @@ import (
 	"youzoo/why/pkg/storage"
 )
 
-
-
 // POST /app/new
 func AppNew(ctx iris.Context) {
 	var app app2.App
@@ -21,7 +19,7 @@ func AppNew(ctx iris.Context) {
 	// create AppTable
 	err = storage.CreateApp(app, db)
 	pri, pub := crypto.GenerateKeyPair(2048)
-	storage.NewKeyPair(app, string(crypto.PrivateKeyToBytes(pri)),string(crypto.PublicKeyToBytes(pub)), db)
+	storage.NewKeyPair(app, string(crypto.PublicKeyToBytes(pub)[:]), string(crypto.PrivateKeyToBytes(pri)[:]), db)
 	if ErrorHandling(err, ctx) {
 		return
 	}
