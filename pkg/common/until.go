@@ -55,6 +55,11 @@ func GetFileMD5(fileAbsPath string) (string, error) {
 	fi, _ := f.Stat()
 	si := fi.Size()
 	fileBytes := make([]byte, si)
-	f.Read(fileBytes)
+
+	_, err = f.Read(fileBytes)
+	if err != nil {
+		return "", err
+	}
+
 	return GetBytesMD5(fileBytes), nil
 }
