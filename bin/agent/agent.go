@@ -1,4 +1,4 @@
-package main
+package agent
 
 import (
 	"flag"
@@ -56,6 +56,11 @@ func main() {
 	err = client.FetchAppInfo(host, appid, &appinfo)
 	if err != nil {
 		fmt.Println(common.GreenBg, "[!] ERROR: "+err.Error(), common.Reset)
+		return
+	}
+
+	if appinfo.DNS != common.GetDNSServer() {
+		fmt.Println(common.GreenBg, "[!] ERROR: DNS Server Error", common.Reset)
 		return
 	}
 
