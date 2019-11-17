@@ -1,4 +1,6 @@
-# improved-octo-giggle
+# KAP 
+
+> @GoHack 2019
 
 ## desc
 * 在构建阶段对可执行文件进行重新打包
