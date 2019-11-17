@@ -9,36 +9,37 @@
 </head>
 <body>
 <div class="table-responsive">
-<table class="table table-striped">
-    <caption>Alert List</caption>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>CreatedAt</th>
-        <th>UpdatedAt</th>
-        <th>Appid</th>
-        <th>Level</th>
-        <th>Type</th>
-        <th>Info</th>
-        <th>PostContact</th>
-    </tr>
-    </thead>
-    <tbody id="dataTable"></tbody>
-</table>
+    <table class="table table-striped">
+        <caption>Alert List</caption>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>CreatedAt</th>
+            <th>UpdatedAt</th>
+            <th>Appid</th>
+            <th>Level</th>
+            <th>Type</th>
+            <th>Info</th>
+            <th>PostContact</th>
+        </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+    </table>
 </div>
 </body>
 <script type="text/JavaScript">
-    $(function() {
+    $(function () {
         $.ajax({
-            url : "http://10.6.24.60:5000/alert/list?from=1&count=200",
-            type : "GET",
-            success : function(data) {
+            url: "http://10.6.24.60:5000/alert/list?from=1&count=200",
+            type: "GET",
+            success: function (data) {
                 createShowingTable(data)
             },
-            error : function() {
+            error: function () {
             }
         });
     });
+
     function createShowingTable(data) {
         var tableStr = "";
         var len = data.length;

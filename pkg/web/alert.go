@@ -1,11 +1,9 @@
 package web
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"youzoo/why/pkg/storage"
 )
-
-
 
 // POST /app/new
 func AlertNew(ctx iris.Context) {
@@ -19,7 +17,7 @@ func AlertNew(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(alert)
+	_, _ = ctx.JSON(alert)
 	return
 }
 
@@ -35,7 +33,7 @@ func AlertUpdate(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(alert)
+	_, _ = ctx.JSON(alert)
 }
 
 // GET /alert/list?from=<int>&count=<int>
@@ -47,5 +45,5 @@ func AlertList(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(alerts)
+	_, _ = ctx.JSON(alerts)
 }

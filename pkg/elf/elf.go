@@ -107,7 +107,7 @@ func ChunkDumper(chunk Chunk) {
 	fmt.Printf("%d bytes:\n", len(chunk.Data))
 	dumper := hex.Dumper(os.Stdout)
 	defer dumper.Close()
-	dumper.Write(chunk.Data)
+	_, _ = dumper.Write(chunk.Data)
 }
 
 func EncryptChunk(chunk Chunk, pubKeyBytes []byte) Chunk {
@@ -213,7 +213,7 @@ func LoadEncryptedFile(fileAbsPath string, priKey []byte) (string, []byte, []byt
 		var tmpBytes []byte
 		if restFileLength < 64 {
 			tmpBytes = make([]byte, restFileLength)
-			f.Read(tmpBytes)
+			_, _ = f.Read(tmpBytes)
 			chunk := Chunk{tmpBytes, false}
 			chunks = append(chunks, chunk)
 			break

@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"youzoo/why/pkg/storage"
 )
 
@@ -17,7 +17,7 @@ func BuildNew(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(build)
+	_, _ = ctx.JSON(build)
 	return
 }
 
@@ -33,7 +33,7 @@ func BuildStatusSet(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(buildTable)
+	_, _ = ctx.JSON(buildTable)
 }
 
 // GET /build/status/get/{buildID}
@@ -47,5 +47,5 @@ func BuildStatusGet(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(buildTable)
+	_, _ = ctx.JSON(buildTable)
 }

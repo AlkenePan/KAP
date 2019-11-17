@@ -2,16 +2,17 @@ package web
 
 import (
 	"github.com/iris-contrib/middleware/cors"
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"youzoo/why/pkg/storage"
 )
+
 var db, err = storage.OpenDb("/tmp/test.db")
 
 func StartApi(port string) {
 	web := iris.Default()
 	web.Logger().SetLevel("debug")
 	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},   //允许通过的主机名称
+		AllowedOrigins:   []string{"*"}, //允许通过的主机名称
 		AllowCredentials: true,
 	})
 	appGroup := web.Party("/app", crs).AllowMethods(iris.MethodOptions)
@@ -42,15 +43,14 @@ func StartApi(port string) {
 		buildGroup.Handle("POST", "/status/set", BuildStatusSet)
 		buildGroup.Handle("POST", "/status/get/{buildID:int}", BuildStatusGet)
 	}
-	web.Run(iris.Addr(port), iris.WithoutServerError(iris.ErrServerClosed))
+	_ = web.Run(iris.Addr(port), iris.WithoutServerError(iris.ErrServerClosed))
 
 }
-
 
 func ErrorHandling(err error, ctx iris.Context) bool {
 	if err != nil {
 		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.WriteString(err.Error())
+		_, _ = ctx.WriteString(err.Error())
 		return true
 	}
 	return false

@@ -9,35 +9,36 @@
 </head>
 <body>
 <div class="table-responsive">
-<table class="table table-striped">
-    <caption>Alert List</caption>
-    <thead>
-    <tr>
-        <th>Appid</th>
-        <th>DNS</th>
-        <th>AbsPath</th>
-        <th>Argv</th>
-        <th>Envv</th>
-        <th>Ptrace</th>
-        <th>UserName</th>
-    </tr>
-    </thead>
-    <tbody id="dataTable"></tbody>
-</table>
+    <table class="table table-striped">
+        <caption>Alert List</caption>
+        <thead>
+        <tr>
+            <th>Appid</th>
+            <th>DNS</th>
+            <th>AbsPath</th>
+            <th>Argv</th>
+            <th>Envv</th>
+            <th>Ptrace</th>
+            <th>UserName</th>
+        </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+    </table>
 </div>
 </body>
 <script type="text/JavaScript">
-    $(function() {
+    $(function () {
         $.ajax({
-            url : "http://10.6.24.60:5000/app/list?from=1&count=200",
-            type : "GET",
-            success : function(data) {
+            url: "http://10.6.24.60:5000/app/list?from=1&count=200",
+            type: "GET",
+            success: function (data) {
                 createShowingTable(data)
             },
-            error : function() {
+            error: function () {
             }
         });
     });
+
     function createShowingTable(data) {
         var tableStr = "";
         var len = data.length;

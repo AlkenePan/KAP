@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	app2 "youzoo/why/pkg/app"
 	"youzoo/why/pkg/storage"
 )
@@ -18,7 +18,7 @@ func KeyUpdate(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.WriteString(app.Dumps())
+	_, _ = ctx.WriteString(app.Dumps())
 }
 
 // GET /key/{appid}
@@ -29,7 +29,7 @@ func KeyFind(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(cryptoTable)
+	_, _ = ctx.JSON(cryptoTable)
 }
 
 // GET /key/pub/{appid}
@@ -40,7 +40,7 @@ func KeyFindPub(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(cryptoTable)
+	_, _ = ctx.JSON(cryptoTable)
 }
 
 // GET /app/pri/{appid}
@@ -51,5 +51,5 @@ func KeyFindPri(ctx iris.Context) {
 	if ErrorHandling(err, ctx) {
 		return
 	}
-	ctx.JSON(cryptoTable)
+	_, _ = ctx.JSON(cryptoTable)
 }

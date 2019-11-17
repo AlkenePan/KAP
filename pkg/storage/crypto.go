@@ -9,7 +9,7 @@ import (
 
 type CryptoTable struct {
 	gorm.Model
-	Appid uuid.UUID
+	Appid  uuid.UUID
 	PubKey string `sql:"type:text"`
 	PriKey string `sql:"type:text"`
 }
@@ -21,12 +21,12 @@ type CryptoTable struct {
 //
 //}
 
-func NewKeyPair(app app.App, pub string, pri string, db *gorm.DB) (error) {
+func NewKeyPair(app app.App, pub string, pri string, db *gorm.DB) error {
 	db.Create(&CryptoTable{Appid: app.Appid, PubKey: pub, PriKey: pri})
 	return nil
 }
 
-func UpdateKeyPair(appid string, pubkey string, prikey string, db *gorm.DB) (error) {
+func UpdateKeyPair(appid string, pubkey string, prikey string, db *gorm.DB) error {
 	var cryptoTable CryptoTable
 	exist := db.First(&cryptoTable, "Appid = ?", appid).RecordNotFound()
 	if !exist {
