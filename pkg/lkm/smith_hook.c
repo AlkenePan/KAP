@@ -62,13 +62,12 @@ static inline int _kill_task_by_pid(pid_t p_pid) {
 static void fsnotify_post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long flags)
 {
     struct path *path;
-    char *final_path;
     __u32 flag = (__u32)p_get_arg2(regs);
     if (flag == FS_OPEN || flag == FS_ACCESS) {
         char buffer[PATH_MAX];
         memset(buffer, 0, sizeof(PATH_MAX));
         path = (struct path *)p_get_arg3(regs);
-        char *pathstr = dentry_path_raw(path->dentry, buffer ,PATH_MAX);
+        char *pathstr = dentry_path_raw(path->dentry, buffer, PATH_MAX);
 
         if(strlen(pathstr) > 5 && checkpath(pathstr) == 1)
             _kill_task_by_task(current, pathstr);
