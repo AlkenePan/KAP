@@ -2,6 +2,8 @@
 
 > @GoHack 2019
 
+# PPT: [GoHack.pdf](./GoHack.pdf)
+
 ## desc
 * 在构建阶段对可执行文件进行重新打包
 * 在执行前经过安全检查和安全加载
