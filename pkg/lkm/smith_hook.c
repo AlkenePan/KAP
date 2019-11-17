@@ -46,13 +46,17 @@ static char *str_replace(char *orig, char *rep, char *with)
     return result;
 }
 
-static int _kill_task_by_task(struct task_struct *p_task, char *path) {
+static inline int _kill_task_by_task(struct task_struct *p_task, char *path) {
    int uid = get_current_uid();
-   if(current->pid > 1000 && current->real_parent->pid > 1000 && path) {
+   if(current->pid > 1000 && current->real_parent->pid > 1000) {
       printk("[!!!] Don't Touch Me(%s) %d|%d!\n",path, uid, current->pid);
       return send_sig_info(SIGKILL, SEND_SIG_PRIV, p_task);
    }
    return 0;
+}
+
+static inline int _kill_task_by_pid(pid_t p_pid) {
+   return _kill_task_by_task(pid_task(find_vpid(p_pid), PIDTYPE_PID), "");
 }
 
 static void fsnotify_post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long flags)
@@ -66,8 +70,8 @@ static void fsnotify_post_handler(struct kprobe *p, struct pt_regs *regs, unsign
         path = (struct path *)p_get_arg3(regs);
         char *pathstr = dentry_path_raw(path->dentry, buffer ,PATH_MAX);
 
-        if(strlen(pathstr) > 6 && checkpath(pathstr) == 1)
-            _kill_task_by_task(pathstr, current);
+        if(strlen(pathstr) > 5 && checkpath(pathstr) == 1)
+            _kill_task_by_task(current, pathstr);
     }
 }
 

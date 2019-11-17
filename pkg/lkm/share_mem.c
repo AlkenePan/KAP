@@ -86,15 +86,15 @@ int checkpath(char *path) {
     node *s;
     struct list_head *p;
     strim(path);
-    write_index_lock();
     list_for_each(p, &protect_list) {
         s = list_entry(p, node, list);
-        if(strstr((const char*)path, (const char*)s->path) != NULL) {
-            write_index_unlock();
-            return 1;
+        strim(s->path);
+        if(strlen(s->path) > 4) {
+            if(strstr((const char*)path, (const char*)s->path) != NULL) {
+                return 1;
+            }
         }
     }
-    write_index_unlock();
     return 0;
 }
 
@@ -112,7 +112,8 @@ static void add_protect_list(char *data)
     write_index_unlock();
 }
 
-static ssize_t device_write(struct file *file,const char __user * buffer, size_t length, loff_t * offset) {
+static ssize_t device_write(struct file *file,const char __user * buffer, size_t length, loff_t * offset)
+{
     int i;
     int flag = 0;
     char path[PATH_MAX] = "";
